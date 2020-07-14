@@ -1,0 +1,141 @@
+import os
+import csv
+import click
+from enum import Enum
+
+from app import app_settings
+
+class Singleton:
+	def __init__(self, cls):
+		self._cls = cls
+
+	def get_instance(self):
+		try:
+			return self._instance
+		except AttributeError:
+			self._instance = self._cls()
+
+		return self._instance
+
+	def __call__(self):
+		raise TypeError('Singletons must be accessed through `get_instance()`.')
+
+	def __instancecheck__(self, inst):
+		return isinstance(inst, self._cls)
+
+
+def get_profiles_paths():
+	return [
+            os.path.join(app_settings.FIREFOX_PROFILES_PATH, d) for d in os.listdir(app_settings.FIREFOX_PROFILES_PATH)
+            if os.path.isdir(os.path.join(app_settings.FIREFOX_PROFILES_PATH, d))
+            and 'default' not in d
+        ]
+
+
+class Profile:
+	def __init__(self, email, password, proxy=None):
+		self.email = email
+		self.password = password
+		self.proxy = proxy
+
+	def __repr__(self):
+		return f'<Profile {self.email}>'
+
+class List:
+	def __init__(self):
+		self.profiles = None
+
+
+class Proxy:
+	def __init__(self, ip, port=app_settings.DEFAULT_PORT):
+		self.ip = ip
+		self.port = port
+
+	def __repr__(self):
+		return f'<Proxy {self.ip}>'
+
+
+class Actions(Enum):
+	SPAM_REPORT_ALL_TO_INBOX		= 0
+	INBOX_SELECT_ALL_MARK_AS_READ	= 1
+	SPAM_SELECT_ALL_MARK_AS_READ	= 2
+	INBOX_ARCHIVE_ALL				= 3
+	INBOX_OPEN_MESSAGES				= 4
+	SPAM_OPEN_MESSAGES				= 5
+
+
+def load_profiles_from_csv():
+	profiles_list = []
+	with open(app_settings.ACCOUNTS_FILE) as f:
+		reader = csv.DictReader(f)
+		for line in reader:
+			# create profile, proxy.
+			proxy = None
+			if line['proxy']:
+				parts = line['proxy'].split(':')
+				if len(parts) == 2:
+					ip, port = parts
+					proxy = Proxy(ip, port)
+				else:
+					proxy = Proxy(parts[0])
+
+			if proxy:
+				profile = Profile(line['email'], line['password'], proxy)
+			else:
+				profile = Profile(line['email'], line['password'])
+			profiles_list.append(profile)
+	return profiles_list
+
+
+def show_introduction():
+	introduction = f"""
++----------------------------------------------------------------------------+
+|                                                                            |
+| ██╗   ██╗ █████╗ ██╗  ██╗ ██████╗  ██████╗     ██████╗  ██████╗ ████████╗  |
+| ╚██╗ ██╔╝██╔══██╗██║  ██║██╔═══██╗██╔═══██╗    ██╔══██╗██╔═══██╗╚══██╔══╝  |
+|  ╚████╔╝ ███████║███████║██║   ██║██║   ██║    ██████╔╝██║   ██║   ██║     |
+|   ╚██╔╝  ██╔══██║██╔══██║██║   ██║██║   ██║    ██╔══██╗██║   ██║   ██║     |
+|    ██║   ██║  ██║██║  ██║╚██████╔╝╚██████╔╝    ██████╔╝╚██████╔╝   ██║     |
+|    ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝     ╚═════╝  ╚═════╝    ╚═╝     |
+|                                                                            |
+|    {app_settings.APP_NAME} v{app_settings.APP_VERSION}                                                         |
+|                                                                            |
+|    Powred By: Omega Capital.                                               |
+|                                                                            |
++----------------------------------------------------------------------------+
+"""
+	click.secho(introduction, fg='bright_black')
+
+
+def show_actions_list():
+	actions = get_available_actions()
+	h1 = ' Yahoo actions list:'
+	click.secho(h1, fg='cyan')
+	click.secho('-' * len(h1), fg='cyan')
+
+	for i, action in enumerate(actions, 1):
+		action_string_parts = action.name.split('_')
+		action_pos = action_string_parts[0]
+		action_name = '_'.join(action_string_parts[1:])
+		print(f' {i} - ({action_pos}) {action_name}')
+
+
+def get_action():
+
+	actions = get_available_actions()
+	show_actions_list()
+	try:
+		click.secho('\nPlease choose the action you want ? (Ctrl+C to exit): ', fg='yellow', nl=False)
+		num = int(input())
+		while num < 1 or num > len(actions):
+			click.secho('Opps!, Action not found.', fg='red')
+			click.secho('Please choose an action from the list above ? (Ctrl+C to exit): ', fg='yellow', nl=False)
+			num = int(input())
+	except KeyboardInterrupt:
+		exit()
+	return actions[num - 1]
+
+
+def get_available_actions():
+	from app import Yahoo
+	return Yahoo.get_available_actions()
