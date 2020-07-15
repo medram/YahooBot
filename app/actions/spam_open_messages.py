@@ -9,9 +9,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, JavascriptException
 
-
 from app.abstract import ActionAbstract
-from app import utils, logger
+from app import utils, logger, app_settings, common
 
 class Spam_open_messages(ActionAbstract):
 
@@ -29,37 +28,51 @@ class Spam_open_messages(ActionAbstract):
 
 		# Scroll down.
 		with utils.scroll_down(driver, 'div[data-test-id=virtual-list]', ignored_exceptions=(JavascriptException,)):
-			actions = ActionChains(driver)
 			time.sleep(2)
+			# select all messages.
+			ActionChains(driver).key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()
+
+			time.sleep(2)
+
+			total_messages = driver.execute_script("""
+				let uls_list = document.querySelectorAll("div.D_F > ul")
+				return parseInt(uls_list[1].lastElementChild.innerText)
+			""")
+
+			if not isinstance(total_messages, int):
+				# set a default value or exit.
+				total_messages = 0
+
+			actions = ActionChains(driver)
 			# Archive all messages.
 			try:
-				messages = driver.find_elements_by_css_selector('a[data-test-id=message-list-item]')
-				messages[0].click()
+				# scroll top to open the first message.
+				with utils.scroll_up(driver, 'div[data-test-id=virtual-list]', ignored_exceptions=(JavascriptException,)):
+					messages = driver.find_elements_by_css_selector('a[data-test-id=message-list-item]')
+					messages[0].click()
+					# get the amount of messages to open.
+					last_message = common.get_amount_of_message(total_messages)
+					click.secho(f'({profile.email}) Total messages {total_messages}: {last_message} messages will be openned.', fg='bright_black')
 
-				last_message = random.randint(min(60, len(messages)), min(120, len(messages)))
-				click.secho(f'({profile.email}) Total messages {len(messages)}: {last_message} messages will be openned.', fg='bright_black')
+					with click.progressbar(length=last_message, label=f'Openning messages ({profile.email})...', show_pos=True) as bar:
+						for i in range(last_message):
+							actions = ActionChains(driver)
+							actions.send_keys(Keys.ARROW_RIGHT)
+							# add start to the current message.
+							if random.random() <= app_settings.MESSAGES_STARTS_RATIO:
+								actions.send_keys('l')
+							actions.perform()
 
-				with click.progressbar(length=last_message, label=f'Openning messages ({profile.email})...', show_pos=True) as bar:
-					for i, message in enumerate(messages):
-						actions = ActionChains(driver)
-						actions.send_keys(Keys.ARROW_RIGHT)
-						# add start to the current message.
-						if random.random() <= 0.3:
-							actions.send_keys('l')
-						actions.perform()
+							# show the progress
+							# print(f'\r{i+1}/{last_message}', end='')
 
-						# show the progress
-						# print(f'\r{i+1}/{last_message}', end='')
+							bar.update(1) # +=1 each time
 
-						bar.update(1) # +=1 each time
+							# clear the all chained actions (is not working, it's a bug in selenium source code).
+							# actions.reset_actions()
 
-						# clear the all chained actions (is not working, it's a bug in selenium source code).
-						# actions.reset_actions()
+							time.sleep(random.uniform(3, 5))
 
-						time.sleep(random.uniform(3, 5))
-						# stop openning messages.
-						if i == last_message:
-							break
 
 			except TimeoutException:
 				logger.warning(f'({self.ACTION.name}) {profile.email:.<40} [WARNING]')

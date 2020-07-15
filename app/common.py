@@ -1,6 +1,7 @@
 import os
 import csv
 import click
+import random
 from enum import Enum
 
 from app import app_settings
@@ -62,6 +63,7 @@ class Actions(Enum):
 	INBOX_ARCHIVE_ALL				= 3
 	INBOX_OPEN_MESSAGES				= 4
 	SPAM_OPEN_MESSAGES				= 5
+	INBOX_OPEN_PLUS_CLICK_MESSAGES	= 6
 
 
 def load_profiles_from_csv():
@@ -91,13 +93,12 @@ def show_introduction():
 	introduction = f"""
 +----------------------------------------------------------------------------+
 |                                                                            |
-|  ██╗   ██╗ █████╗ ██╗  ██╗ ██████╗  ██████╗ ██████╗  ██████╗ ████████╗     |
-|  ╚██╗ ██╔╝██╔══██╗██║  ██║██╔═══██╗██╔═══██╗██╔══██╗██╔═══██╗╚══██╔══╝     |
-|   ╚████╔╝ ███████║███████║██║   ██║██║   ██║██████╔╝██║   ██║   ██║        |
-|    ╚██╔╝  ██╔══██║██╔══██║██║   ██║██║   ██║██╔══██╗██║   ██║   ██║        |
-|     ██║   ██║  ██║██║  ██║╚██████╔╝╚██████╔╝██████╔╝╚██████╔╝   ██║        |
-|     ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═════╝  ╚═════╝    ╚═╝        |
-|                                                                            |
+|  ██╗   ██╗ █████╗ ██╗  ██╗ ██████╗  ██████╗     ██████╗  ██████╗ ████████╗ |
+|  ╚██╗ ██╔╝██╔══██╗██║  ██║██╔═══██╗██╔═══██╗    ██╔══██╗██╔═══██╗╚══██╔══╝ |
+|   ╚████╔╝ ███████║███████║██║   ██║██║   ██║    ██████╔╝██║   ██║   ██║    |
+|    ╚██╔╝  ██╔══██║██╔══██║██║   ██║██║   ██║    ██╔══██╗██║   ██║   ██║    |
+|     ██║   ██║  ██║██║  ██║╚██████╔╝╚██████╔╝    ██████╔╝╚██████╔╝   ██║    |
+|     ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝  ╚═════╝     ╚═════╝  ╚═════╝    ╚═╝    |
 |                                                                            |
 |                                                                            |
 |    {app_settings.APP_NAME} v{app_settings.APP_VERSION}                    Developed By: {app_settings.DEVELOPED_BY}      |
@@ -142,3 +143,14 @@ def get_action():
 def get_available_actions():
 	from app import Yahoo
 	return Yahoo.get_available_actions()
+
+
+def get_mailbox_messages_range(total_messages):
+	""" Get the max and min messages in the inbox """
+	x_min = min(total_messages, app_settings.MESSAGES_MIN_OPEN)
+	x_max = min(total_messages, app_settings.MESSAGES_MAX_OPEN)
+	return x_min, x_max
+
+def get_amount_of_message(total_messages):
+	"""Get the amount of messages to open."""
+	return random.randint(*get_mailbox_messages_range(total_messages))
