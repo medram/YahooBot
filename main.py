@@ -18,7 +18,6 @@ from app import Yahoo, common, logger
 # 						color='green') as bar:
 #     for x in bar:
 #         time.sleep(0.5)
-
 # exit()
 
 # main function.

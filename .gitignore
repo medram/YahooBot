@@ -1,5 +1,5 @@
-/logs
-/venv
+logs/
+venv/
 **geckodriver.log
 **__pycache__**
 *.pyc
