@@ -4,7 +4,7 @@ from selenium.webdriver.support.events import AbstractEventListener
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 class MyListeners(AbstractEventListener):
 	def before_close(self, driver):
@@ -66,15 +66,29 @@ def document_completed(driver, timeout=10):
 
 
 @contextlib.contextmanager
-def scroll_up(driver, css_selector, timeout=60, poll_frequency=2, ignored_exceptions=tuple()):
-	if css_selector:
-		WebDriverWait(driver, timeout, poll_frequency=poll_frequency, ignored_exceptions=(TimeoutException,) + ignored_exceptions).until(is_scroll_up(css_selector))
+def scroll_up(driver, css_selector, timeout=60, poll_frequency=2,  ignored_exceptions=(TimeoutException,)):
+	try:
+		# check if the element is found (css_selector).
+		driver.find_element_by_css_selector(css_selector)
+		WebDriverWait(driver, timeout, poll_frequency=poll_frequency, ignored_exceptions=ignored_exceptions).until(is_scroll_up(css_selector))
+	except NoSuchElementException:
+		# Element Not found
+		pass
+	except TimeoutException:
+		pass
 	yield
 
 @contextlib.contextmanager
-def scroll_down(driver, css_selector, timeout=60, poll_frequency=2, ignored_exceptions=tuple()):
-	if css_selector:
-		WebDriverWait(driver, timeout, poll_frequency=poll_frequency, ignored_exceptions=(TimeoutException,) + ignored_exceptions).until(is_scroll_down(css_selector))
+def scroll_down(driver, css_selector, timeout=60, poll_frequency=2, ignored_exceptions=(TimeoutException,)):
+	try:
+		# check if the element is found (css_selector).
+		driver.find_element_by_css_selector(css_selector)
+		WebDriverWait(driver, timeout, poll_frequency=poll_frequency, ignored_exceptions=ignored_exceptions).until(is_scroll_down(css_selector))
+	except NoSuchElementException:
+		# Element Not found
+		pass
+	except TimeoutException:
+		pass
 	yield
 
 

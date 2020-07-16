@@ -29,28 +29,37 @@ def main():
 
 	profiles_list = common.load_profiles_from_csv()
 
-	click.secho(f'Total emails: {len(profiles_list)}', fg='bright_black')
+	logger.debug(f'Total emails: {len(profiles_list)}')
 	logger.info(f'Processing ({ACTION.name}) ...')
 
-	for profile in profiles_list:
-		try:
-			isp = Yahoo(profile)
-			isp.login()
-			isp.do_action(ACTION)
-			isp.quit()
+	try:
+		for i, profile in enumerate(profiles_list):
+			logger.debug(f'Emails processed: {i}/{len(profiles_list)} ({round(i / len(profiles_list) * 100, 2)}%)')
+			try:
+				isp = Yahoo(profile)
+				isp.login()
+				isp.do_action(ACTION)
+				isp.quit()
 
-		except WebDriverException as e:
-			if 'Message: Reached error page' in str(e):
-				logger.warning(f'Please check your internet connection of your server/RDP')
-			else:
+			except WebDriverException as e:
+				if 'Message: Reached error page' in str(e):
+					logger.warning(f'Please check your internet connection of your server/RDP')
+				elif 'Message: Failed to decode response' in str(e):
+					logger.warning(f'Message: Failed to decode response from marionette!')
+				elif 'Message: permission denied' in str(e):
+					logger.warning(f'Message: permission denied!')
+				else:
+					logger.exception('Exception occured')
+			except KeyboardInterrupt:
+				raise
+			except Exception as e:
+				# exc_type, exc_value, exc_tb = sys.exc_info()
+				# traceback.print_exception(exc_type, exc_value, exc_tb)
 				logger.exception('Exception occured')
-		except KeyboardInterrupt:
-			logger.info('Stopped')
-		except Exception as e:
-			# exc_type, exc_value, exc_tb = sys.exc_info()
-			# traceback.print_exception(exc_type, exc_value, exc_tb)
-			logger.exception('Exception occured')
 
+		logger.debug(f'Emails processed: {len(profiles_list)}/{len(profiles_list)} (100%)')
+	except KeyboardInterrupt:
+		logger.info('Stopped')
 
 
 if __name__ == '__main__':

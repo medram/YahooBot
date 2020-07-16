@@ -4,6 +4,7 @@ import os
 # import pickle
 
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import (
@@ -78,6 +79,17 @@ class Yahoo(AbstractISP):
 	def create_profile(self):
 		print('creating profile.')
 
+	def get_total_messages(self):
+		# select all messages.
+		ActionChains(self.driver).key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()
+
+		time.sleep(2)
+
+		return self.driver.execute_script("""
+			let uls_list = document.querySelectorAll("div.D_F > ul")
+			let text_value = uls_list[1].lastElementChild.innerText
+			return parseInt((text_value.split(" ")).join(''))
+		""")
 
 
 	def _automatic_login(self):
