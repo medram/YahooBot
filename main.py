@@ -32,6 +32,8 @@ def main():
 	logger.debug(f'Total emails: {len(profiles_list)}')
 	logger.info(f'Processing ({ACTION.name}) ...')
 
+	start = time.time()
+
 	try:
 		for i, profile in enumerate(profiles_list):
 			logger.debug(f'Emails processed: {i}/{len(profiles_list)} ({round(i / len(profiles_list) * 100, 2)}%)')
@@ -57,7 +59,7 @@ def main():
 				# traceback.print_exception(exc_type, exc_value, exc_tb)
 				logger.exception('Exception occured')
 
-		logger.debug(f'Emails processed: {len(profiles_list)}/{len(profiles_list)} (100%)')
+		logger.debug(f'{len(profiles_list)} emails has been processed in ({common.prettify_seconds(time.time() - start)})')
 	except KeyboardInterrupt:
 		logger.info('Stopped')
 

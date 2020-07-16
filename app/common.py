@@ -154,3 +154,16 @@ def get_mailbox_messages_range(total_messages):
 def get_amount_of_message(total_messages):
 	"""Get the amount of messages to open."""
 	return random.randint(*get_mailbox_messages_range(total_messages))
+
+
+def prettify_seconds(sec):
+	if sec < 60: 		# less than 1 minute.
+		return '%.2f seconds' % sec
+	elif sec / 60 < 60: # less than 1 hour.
+		return '%.2f minutes' % (sec / 60)
+	elif sec / 3600 < 24: # less than 1 day.
+		return '%.2f hours' % (sec / 3600)
+
+	# return in days.
+	return '%.2f days' % (sec / 86400)
+
