@@ -26,7 +26,7 @@ class Spam_report_all_to_inbox(ActionAbstract):
 		time.sleep(5)
 
 		# Scroll down.
-		with utils.scroll_down(driver, 'div[data-test-id=virtual-list]', ignored_exceptions=(JavascriptException,)):
+		with utils.scroll_down(driver, 'div[data-test-id=virtual-list]', ignored_exceptions=(TimeoutException, JavascriptException)):
 			actions = ActionChains(driver)
 			# select all msgs at spam section.
 			actions.key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()
@@ -50,8 +50,10 @@ class Spam_report_all_to_inbox(ActionAbstract):
 					# wait to make sure the action is applied
 					time.sleep(5)
 			except TimeoutException:
-				logger.warning(f'({self.ACTION.name}) {profile.email:.<40} [WARNING]')
+				logger.warning(f'[{self.ACTION.name}] Timeout ({profile.email}).')
+			except IndexError:
+				logger.warning(f'[{self.ACTION.name}] Maybe no messages are found in Spam of ({profile.email}).')
 			except Exception as e:
-				logger.exception(f'[{self.ACTION.name}] {profile.email:.<40} [Error]')
+				logger.exception(f'[{self.ACTION.name}] ({profile.email})')
 			else:
 				logger.info(f'({self.ACTION.name}) {profile.email:.<40} [DONE]')

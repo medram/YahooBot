@@ -37,6 +37,10 @@ class AbstractISP(abc.ABC):
 				)
 
 		# driver = EventFiringWebDriver(driver, MyListeners())
+
+		if app_settings.BROWSER_MINIMIZE_WINDOW:
+			driver.minimize_window()
+
 		driver.implicitly_wait(10)
 		return driver
 

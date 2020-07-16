@@ -31,15 +31,7 @@ class Inbox_open_messages(ActionAbstract):
 		with utils.scroll_down(driver, 'div[data-test-id=virtual-list]', ignored_exceptions=(JavascriptException,)):
 			time.sleep(2)
 
-			# select all messages.
-			ActionChains(driver).key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()
-
-			time.sleep(2)
-
-			total_messages = driver.execute_script("""
-				let uls_list = document.querySelectorAll("div.D_F > ul")
-				return parseInt(uls_list[1].lastElementChild.innerText)
-			""")
+			total_messages = self.isp.get_total_messages()
 
 			if not isinstance(total_messages, int):
 				# set a default value or exit.

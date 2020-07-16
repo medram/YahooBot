@@ -41,11 +41,12 @@ class Inbox_archive_all(ActionAbstract):
 
 
 				time.sleep(5)
-				wait = WebDriverWait(driver, 30)
-				# undo_notification = (By.CSS_SELECTOR, 'div[role=status] div')
+				wait = WebDriverWait(driver, 60)
+				undo_notification = (By.CSS_SELECTOR, 'div[role=status] div')
 				alertdialog = (By.CSS_SELECTOR, 'div[role=alertdialog] div')
 
-				if wait.until_not(EC.presence_of_element_located(alertdialog)):
+				if wait.until_not(EC.presence_of_element_located(alertdialog)) \
+					and wait.until_not(EC.presence_of_element_located(undo_notification)):
 					# print('Confirm')
 					# wait to make sure the action is applied
 					time.sleep(5)
