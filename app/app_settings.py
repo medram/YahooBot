@@ -16,6 +16,9 @@ EXECUTABLE_PATH = 'bin/geckodriver.exe'
 
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 
+########################### Browser settings  ############################
+
+BROWSER_MINIMIZE_WINDOW = False
 
 ########################### Messages settings ############################
 
@@ -31,7 +34,7 @@ MESSAGES_CLICK_RATIO 	= 0.2 	# from 0 to 1 (0.3 means 30%).
 
 APP_NAME = 'YahooBot'
 
-APP_VERSION = '0.1.0'
+APP_VERSION = '1.0.0'
 
 POWRED_BY = 'Omega Capital'
 
