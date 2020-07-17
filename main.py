@@ -48,7 +48,17 @@ def main():
 				isp.login()
 				# invoke multiple actions.
 				for ACTION in ACTIONS:
-					isp.do_action(ACTION)
+					try:
+						isp.do_action(ACTION)
+					except WebDriverException as e:
+						if 'Message: Reached error page' in str(e):
+							logger.warning(f'Please check your internet connection of your server/RDP')
+						elif 'Message: Failed to decode response' in str(e):
+							logger.warning(f'Message: Failed to decode response from marionette!')
+						elif 'Message: permission denied' in str(e):
+							logger.warning(f'Message: permission denied!')
+						else:
+							logger.exception('Exception occured')
 				isp.quit()
 
 			except WebDriverException as e:
