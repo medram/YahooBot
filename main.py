@@ -6,7 +6,7 @@ import click
 
 from selenium.common.exceptions import WebDriverException
 
-from app import Yahoo, common, logger
+from app import Yahoo, common, logger, app_settings
 
 # messages = list(range(10))
 # total_messages = len(messages)
@@ -25,9 +25,12 @@ def main():
 	# show an introduction about YahooBot
 	common.show_introduction()
 
+	try:
+		profiles_list = common.load_profiles_from_csv()
+	except FileNotFoundError:
+		logger.error(f'Oops! "{app_settings.ACCOUNTS_FILE}" file not found.')
+		exit(1)
 	ACTION = common.get_action()
-
-	profiles_list = common.load_profiles_from_csv()
 
 	logger.debug(f'Total emails: {len(profiles_list)}')
 	logger.info(f'Processing ({ACTION.name}) ...')
