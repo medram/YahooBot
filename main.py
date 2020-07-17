@@ -30,20 +30,25 @@ def main():
 	except FileNotFoundError:
 		logger.error(f'Oops! "{app_settings.ACCOUNTS_FILE}" file not found.')
 		exit(1)
-	ACTION = common.get_action()
+	# ACTION = common.get_action()
+	ACTIONS = common.get_actions()
 
 	logger.debug(f'Total emails: {len(profiles_list)}')
-	logger.info(f'Processing ({ACTION.name}) ...')
 
 	start = time.time()
 
+
+
 	try:
+		# logger.info(f'Processing ({ACTION.name}) ...')
 		for i, profile in enumerate(profiles_list):
 			logger.debug(f'Emails processed: {i}/{len(profiles_list)} ({round(i / len(profiles_list) * 100, 2)}%)')
 			try:
 				isp = Yahoo(profile)
 				isp.login()
-				isp.do_action(ACTION)
+				# invoke multiple actions.
+				for ACTION in ACTIONS:
+					isp.do_action(ACTION)
 				isp.quit()
 
 			except WebDriverException as e:

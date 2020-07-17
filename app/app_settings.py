@@ -18,7 +18,7 @@ LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 
 ########################### Browser settings  ############################
 
-BROWSER_MINIMIZE_WINDOW = False
+BROWSER_MINIMIZE_WINDOW = True
 
 ########################### Messages settings ############################
 

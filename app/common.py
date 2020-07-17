@@ -140,6 +140,25 @@ def get_action():
 	return actions[num - 1]
 
 
+def get_actions():
+	actions = get_available_actions()
+	result = []
+	show_actions_list()
+	try:
+		click.secho('\nPlease choose actions you want ? (Ctrl+C to exit): ', fg='yellow', nl=False)
+		actions_string = [ int(n) for n in str(input()).split(' ')]
+		for num in actions_string:
+			while num < 1 or num > len(actions):
+				click.secho(f'Opps!, Action {num} not found.', fg='red')
+				exit()
+				# click.secho('Please choose actions from the list above ? (Ctrl+C to exit): ', fg='yellow', nl=False)
+				# num = int(input())
+			result.append(actions[num - 1])
+	except KeyboardInterrupt:
+		exit()
+	return result
+
+
 def get_available_actions():
 	from app import Yahoo
 	return Yahoo.get_available_actions()
