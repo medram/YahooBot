@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, JavascriptException
+from selenium.common.exceptions import TimeoutException, JavascriptException, WebDriverException
 
 
 from app.abstract import ActionAbstract
@@ -70,15 +70,12 @@ class Inbox_open_plus_click_messages(ActionAbstract):
 
 								images_in_messages = driver.find_elements_by_css_selector('div[data-test-id=message-view-body-content] a img')
 								if images_in_messages:
-									# try:
-									image_to_click = images_in_messages[0]
-									ActionChains(driver).key_down(Keys.CONTROL).click(image_to_click).key_up(Keys.CONTROL).perform()
-								# 	print(image_to_click)
-								# 	# image_to_click.click()
-								# 	actions.pause(1).click(image_to_click)
-								# 	# actions.move_to_element(image_to_click).click(image_to_click)
-								# 	# except Exception:
-								# 	# 	pass
+									try:
+										image_to_click = images_in_messages[0]
+										ActionChains(driver).key_down(Keys.CONTROL).click(image_to_click).key_up(Keys.CONTROL).perform()
+										# actions.move_to_element(image_to_click).click(image_to_click)
+									except WebDriverException:
+										pass
 
 							bar.update(1) # +=1 each time
 
