@@ -28,13 +28,13 @@ MESSAGES_MIN_OPEN 		= 60 	# number of messages
 
 MESSAGES_STARTS_RATIO 	= 0.3 	# from 0 to 1 (0.3 means 30%).
 
-MESSAGES_CLICK_RATIO 	= 0.2 	# from 0 to 1 (0.3 means 30%).
+MESSAGES_CLICK_RATIO 	= 0.3 	# from 0 to 1 (0.3 means 30%).
 
 ########################### Application info #############################
 
 APP_NAME = 'YahooBot'
 
-APP_VERSION = '1.0.0'
+APP_VERSION = '1.0.1'
 
 POWRED_BY = 'Omega Capital'
 
