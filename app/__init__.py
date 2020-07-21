@@ -12,8 +12,9 @@ from selenium.common.exceptions import (
 		ElementClickInterceptedException,
 		InvalidCookieDomainException,
 		StaleElementReferenceException,
-		TimeoutException
-	)
+		TimeoutException,
+		JavascriptException
+ )
 
 from app.logger import logger
 from app.abstract import AbstractISP, ActionAbstract
@@ -83,14 +84,28 @@ class Yahoo(AbstractISP):
 		# select all messages.
 		ActionChains(self.driver).key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()
 
-		time.sleep(2)
+		time.sleep(4)
 
+		# try:
 		return self.driver.execute_script("""
-			let uls_list = document.querySelectorAll("div.D_F > ul")
+			let uls_list = document.querySelectorAll('div.D_F > ul')
 			let text_value = uls_list[1].lastElementChild.innerText
-			return parseInt((text_value.split(" ")).join(''))
-		""")
 
+			let cleaned_value = []
+			let code = 0
+
+			for (let i = 0; i < text_value.length; ++i)
+			{
+				code = text_value.charCodeAt(i)
+				if (code >= 48 && code <= 57)
+				{
+					cleaned_value.push(text_value[i])
+				}
+			}
+			return parseInt(cleaned_value.join(''))
+		""")
+		# except JavascriptException:
+		# 	return 0
 
 	def _automatic_login(self):
 		self.driver.get('https://mail.yahoo.com/d/folders/1')
