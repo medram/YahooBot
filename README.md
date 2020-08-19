@@ -1,5 +1,5 @@
 # YahooBot
-YahooBot is a script that helps you to automate some your Aol mailbox actions.
+YahooBot is a script that helps you to automate some your Yahoo mailbox actions.
 
 ## Features
 YahooBot supports 5 actions so far, these actions are:
@@ -14,7 +14,7 @@ YahooBot supports 5 actions so far, these actions are:
 ## How to use YahooBot
 ### Instalation step:
 - Make sure your PC supports Python 3.8 or higher.
-- Double click on "install.bat" file, and let AolBot do the rest :D, (it will take about 15 to 60 seconds, just be patient).
+- Double click on "install.bat" file, and let YahooBot do the rest :D, (it will take about 15 to 60 seconds, just be patient).
 
 ### Configuration step:
 Just put your Yahoo accounts in this format at "accounts.csv" file (it's better to use Notepad++ to edit this file):
@@ -29,7 +29,7 @@ account4@yahoo.com,passw0rd4,147.25.14.195:6666
 And save your your file, then double click "run.bat" file.
 this console window should be prompted
 
-![](https://raw.githubusercontent.com/medram/AolBot/master/wiki/imgs/1.png)
+![](https://raw.githubusercontent.com/medram/YahooBot/master/wiki/imgs/1.png)
 
 ### Performing Actions step:
 You could perform one or multiple actions at once,
@@ -39,4 +39,4 @@ for multiple actions insert number of actions separated with a space, then hit e
 Then Enjoy :D
 
 # Finally
-I hope AolBot script helps someone :D
+I hope YahooBot script helps someone :D
