@@ -29,7 +29,7 @@ account4@yahoo.com,passw0rd4,147.25.14.195:6666
 And save your your file, then double click "run.bat" file.
 this console window should be prompted
 
-![](https://raw.githubusercontent.com/medram/YahooBot/master/wiki/imgs/1.png)
+![](https://raw.githubusercontent.com/medram/YahooBot/master/wiki/imgs/1.PNG)
 
 ### Performing Actions step:
 You could perform one or multiple actions at once,
